@@ -102,7 +102,7 @@ resolve_directory() {
     done
 }
 
-# ── Menu ──────────────────────────────────────────────────────────────────────
+#------------------------------------------- Menu ----------------------------------------------------------------──
 echo -e "Choose what to do: \n"
 echo "1: Make the directory structure."
 echo "2: Dynamic Configuration (Stream Editing)"
