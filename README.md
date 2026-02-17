@@ -1,81 +1,101 @@
-Overview
-setup_project.sh is a fully automated shell script that bootstraps a Student Attendance Tracker workspace. It creates the required directory architecture, populates all source files, allows dynamic configuration updates via sed, handles interrupts gracefully with a trap, and validates the environment before completing setup.
+# deploy_agent_kevinishimwe2
 
-Repository Structure
-deploy_agent_YourUsername/
-├── setup_project.sh       # Master bootstrap script
-└── README.md              # This file
-After running the script, a new project directory is created in your current folder:
+A shell script that automates the setup and management of a Student Attendance Tracker project.
 
-attendance_tracker_{input}/
-├── attendance_checker.py       # Main Python application
-├── Helpers/
-│   ├── assets.csv              # Student attendance data
-│   └── config.json             # Attendance threshold configuration
-└── reports/
-    └── reports.log             # Output log for attendance reports
-How to Run
-1. Clone the repository
-bash
-git clone https://github.com/YourUsername/deploy_agent_YourUsername.git
-cd deploy_agent_YourUsername
-2. Make the script executable
-bash
+---
+
+## How to run the script
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/kevinishimwe2/deploy_agent_kevinishimwe2.git
+cd deploy_agent_kevinishimwe2
+```
+
+### 2. Make the script executable
+```bash
 chmod +x setup_project.sh
-3. Run the script
-bash
+```
+
+### 3. Run the script
+```bash
 ./setup_project.sh
-You will be prompted to:
+```
 
-Enter a project name (e.g. cohort5, term2) — the workspace will be created as attendance_tracker_{input}
-Optionally update attendance thresholds (Warning %, Failure %) in config.json
-4. Run the Python tracker (after setup)
-bash
-cd attendance_tracker_{input}
-python3 attendance_checker.py
-Results are printed to the terminal and appended to reports/reports.log.
+### 4. Choose an option from the menu
+```
+1: Make the directory structure.
+2: Dynamic Configuration (Stream Editing)
+3: Process Management (The Trap)
+4: Health Check
+```
 
-How to Trigger the Archive Feature (Ctrl+C Interrupt)
-The script uses a SIGINT trap to handle cancellation gracefully.
+---
 
-To trigger it:
+## What each option does
 
-Start the script: ./setup_project.sh
-Enter a project name when prompted
-Press Ctrl+C at any point during execution
-What happens:
+**Option 1 — Directory Structure**
+Creates the full project folder with all required files inside it.
+You will be asked to enter a suffix for the project name.
+The folder will be named `attendance_tracker_{suffix}`.
 
-The script catches the interrupt signal
-It bundles the incomplete project directory into a compressed archive:
-attendance_tracker_{input}_archive.tar.gz
-It deletes the incomplete directory to keep your workspace clean
-It exits with a non-zero status code
-Example output:
+**Option 2 — Dynamic Configuration**
+Updates the warning and failure thresholds inside `config.json`
+using `sed` to edit the file directly.
+You must have already run option 1 first.
 
-⚠️  Interrupt detected (Ctrl+C)! Cleaning up incomplete workspace...
-📦 Bundling current state into archive: attendance_tracker_cohort5_archive.tar.gz
-🗑️  Removing incomplete project directory: attendance_tracker_cohort5
-✅ Cleanup complete. Archive saved as: attendance_tracker_cohort5_archive.tar.gz
-Configuration Details
-The config.json file controls attendance thresholds:
+**Option 3 — Process Management (The Trap)**
+Runs a simulated deployment process.
+If you press `Ctrl+C` during the process, the script will
+archive the project folder and delete it to keep the workspace clean.
 
-Key	Default	Description
-warning_threshold	75	Students below this % receive a WARNING
-failure_threshold	50	Students below this % receive a FAIL
-The script uses sed to update these values in-place without opening a text editor.
+**Option 4 — Health Check**
+Checks if Python3 is installed and verifies that all required
+files and folders exist inside the project directory.
 
-Environment Requirements
-Tool	Purpose	Required?
-bash	Run the shell script	✅ Yes
-python3	Run the attendance tracker	✅ Yes (checked by script)
-tar	Create the interrupt archive	✅ Yes (usually pre-installed)
-sed	In-place config editing	✅ Yes (usually pre-installed)
-Demo Video
-🎬 [Link to run-through video — add your link here]
+---
 
-Author
-[Kevin Karagire Ishimwe]
-GitHub: @kevinishimwe2
-ALU — January Term 2026
+## How to trigger the archive feature
 
+1. Run the script and choose option **3**
+2. Enter your project suffix when prompted
+3. When you see:
+```
+press Ctrl+C to test the trap
+```
+4. Press **Ctrl+C** on your keyboard
 
+The script will then:
+- Bundle the project folder into a `.tar.gz` archive
+- Name it `attendance_tracker_{suffix}_archive.tar.gz`
+- Delete the incomplete project folder
+- Exit cleanly
+
+To confirm the archive was created run:
+```bash
+ls *.tar.gz
+```
+
+---
+
+## Project structure
+
+After running option 1 your project will look like this:
+
+```
+attendance_tracker_{suffix}/
+├── attendance_checker.py
+├── Helpers/
+│   ├── assets.csv
+│   └── config.json
+└── reports/
+    └── reports.log
+```
+
+---
+
+## Requirements
+
+- Bash
+- Python3
+- Git
