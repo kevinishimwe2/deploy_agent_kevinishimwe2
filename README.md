@@ -40,18 +40,18 @@ You will be asked to enter a suffix for the project name.
 The folder will be named `attendance_tracker_{suffix}`.
 
 **Option 2 — Dynamic Configuration**
-Updates the warning and failure thresholds inside `config.json`
+Updates the warning and failure thresholds inside `config.json.`
 using `sed` to edit the file directly.
 You must have already run option 1 first.
 
 **Option 3 — Process Management (The Trap)**
 Runs a simulated deployment process.
 If you press `Ctrl+C` during the process, the script will
-archive the project folder and delete it to keep the workspace clean.
+Archive the project folder and delete it to keep the workspace clean.
 
 **Option 4 — Health Check**
 Checks if Python3 is installed and verifies that all required
-files and folders exist inside the project directory.
+Files and folders exist inside the project directory.
 
 ---
 
@@ -61,7 +61,7 @@ files and folders exist inside the project directory.
 2. Enter your project suffix when prompted
 3. When you see:
 ```
-press Ctrl+C to test the trap
+Press Ctrl+C to test the trap
 ```
 4. Press **Ctrl+C** on your keyboard
 
@@ -71,7 +71,7 @@ The script will then:
 - Delete the incomplete project folder
 - Exit cleanly
 
-To confirm the archive was created run:
+To confirm the archive was created, run:
 ```bash
 ls *.tar.gz
 ```
@@ -80,7 +80,7 @@ ls *.tar.gz
 
 ## Project structure
 
-After running option 1 your project will look like this:
+After running option 1, your project will look like this:
 
 ```
 attendance_tracker_{suffix}/
