@@ -9,15 +9,15 @@ create_directory() {
             continue
         fi
         if [[ ! "$y" =~ ^[A-Za-z0-9_-]+$ ]]; then
-            echo "Invalid name. Use only letters, numbers, underscore (_) or hyphen (-)."
+            echo "Invalid name. Use only letters, numbers, underscore (_), or hyphen (-)."
             continue
         fi
 
         full_dir="${dir}_${y}"
         if [[ -d "$full_dir" ]]; then
             echo "Directory '$full_dir' already exists!"
-            read -p "Do you want to (y) try a different name or (n) cancel? [yes(y)/no(n)]: " choice
-            case $choice in
+            read -p "Do you want to continue but use another name? [yes(y)/no(n)]: " a
+            case $a in
                 y | Y) continue ;;
                 n | N)
                     echo "Cancelled."
@@ -27,7 +27,7 @@ create_directory() {
             esac
         else
             mkdir -p "$full_dir" || {
-                echo "Error: cannot create '$full_dir' (permissions?)"
+                echo "Error: cannot create '$full_dir' (permissions?)."
                 return 1
             }
             echo "Directory '$full_dir' created successfully!"
@@ -97,13 +97,13 @@ EOF
     chmod +x "${full_dir}/attendance_checker.py"
 
     cat > "${full_dir}/Helpers/assets.csv" << 'EOF'
-Student number,Names,Attendance Count,Absence Count
-S001,Alice Johnson,14,1
-S002,Bob Smith,7,8
-S003,Charlie Davis,4,11
-S004,Diana Prince,15,0
-S005,Patrick Ishimwe,10,5
-S006,Kevin Debryne,11,4
+Student number, Names, Attendance Count, Absence Count
+S001, Alice Johnson,14,1
+S002, Bob Smith,7,8
+S003, Charlie Davis,4,11
+S004, Diana Prince,15,0
+S005, Patrick Ishimwe,10,5
+S006, Kevin Debryne,11,4
 EOF
 
     cat > "${full_dir}/Helpers/config.json" << 'EOF'
@@ -125,8 +125,8 @@ EOF
     return 0
 }
 
-# ── Reusable directory resolver to check the availability of the directories in case 2 and 3 ───────────────────────────────────────────────
-resolve_directory() {
+# ── Reusable directory resolver to check the availability of the directories in cases 2 and 3 ───────────────────────────────────────────────
+check_for_dir() {
     while true; do
         read -rp "  Enter your directory(project) suffix [attendance_tracker_{input}]: " input
         curr_dir="attendance_tracker_${input}"
@@ -156,11 +156,11 @@ resolve_directory() {
 }
 
 #------------------------------------------- Menu ----------------------------------------------------------------──
-echo -e "Choose what to do: \n"
+echo -e "Choose what to do: \n."
 echo "1: Make the directory structure."
-echo "2: Dynamic Configuration (Stream Editing)"
-echo "3: Process Management (The Trap)"
-echo "4: Health Check "
+echo "2: Dynamic Configuration (Stream Editing)."
+echo "3: Process Management (The Trap)."
+echo "4: Health Check."
 echo ""
 read -p "Enter your choice(1-4): " x
 
@@ -170,7 +170,7 @@ case $x in
         ;;
 
     2)
-        resolve_directory || exit 1
+        check_for_dir || exit 1
 
         CONFIG_FILE="${curr_dir}/Helpers/config.json"
 
@@ -208,7 +208,7 @@ case $x in
 
     3)
 
-        resolve_directory || exit 1
+        check_for_dir || exit 1
 
         # -----Ctrl+C or SIGINT trap to archive and clean up the workspace on interrupt -----
         cleanup() {
@@ -227,12 +227,13 @@ case $x in
 
         trap cleanup SIGINT
 
-        echo "press Ctrl+C to test the trap"
+        echo "press Ctrl+C to test the trap."
         steps=(
-            "1 : Validating permissions"
-            "2 : Reading config" "Processing data"
-            "3 : Generating report"
-            "4 : Finalising"
+            "1: Validating permissions."
+            "2: Reading config." 
+            "4: Processing data."
+            "3: Generating report."
+            "4: Finalising"
         )
         for i in "${!steps[@]}"; do
             echo -ne "  ${steps[i]}..."
@@ -245,7 +246,7 @@ case $x in
         ;;
 
     4)
-        resolve_directory || exit 1
+        check_for_dir || exit 1
         # ---------------------Start of health check ------------------------------------------------------
         # _______________check 1: Verify python installation____________________
         if python3 --version > /dev/null 2>&1; then
