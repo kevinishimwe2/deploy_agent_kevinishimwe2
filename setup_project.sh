@@ -35,9 +35,9 @@ create_directory() {
         fi
     done
     #trap interruption
-    cleanup_setup() {
+    cleanup_setup_1() {
         echo ""
-        echo "SIGINT detected during setup."
+        echo "SIGINT detected (Ctrl + C) or Failure of dir creation."
         if [[ -d "$full_dir" ]]; then
             tar -czf "${full_dir}_archive.tar.gz" "$full_dir"
             echo "Archive created: ${full_dir}_archive.tar.gz"
@@ -47,17 +47,11 @@ create_directory() {
         exit 130
     }
 
-    trap cleanup_setup SIGINT
+    trap cleanup_setup_1 SIGINT
 
-    mkdir -p "${full_dir}/Helpers"
-    mkdir -p "${full_dir}/reports"
-    chmod 755 "${full_dir}"
-    if [[ -d "${full_dir}" && -d "${full_dir}/Helpers" && -d "${full_dir}/reports" ]]; then
-        echo "Directory structure created successfully!"
-    else
-        echo "Error: Failed to create the directory structure."
-        return 1
-    fi
+    mkdir -p "${full_dir}/Helpers" "${full_dir}/reports" || cleanup_setup_1
+    chmod 755 "${full_dir}" 2>/dev/null || echo "Warning: could not chmod '${full_dir}'."
+
     cat > "${full_dir}/attendance_checker.py" << 'EOF'
 import csv
 import json
@@ -215,7 +209,7 @@ case $x in
             echo ""
             echo "User stopped the process."
             if [[ -d "$curr_dir" ]]; then
-                tar -czf "${curr_dir}_archive.tar.gz" "${curr_dir}"
+                tar -czf "${curr_dir}_archive.tar.gz" "$curr_dir"
                 echo "Archive created: ${curr_dir}_archive.tar.gz"
                 rm -rf "${curr_dir}"
                 echo "Workspace cleaned up."
@@ -257,8 +251,35 @@ case $x in
             echo "Python is not installed."
         fi
 
+        main_dir="${curr_dir}"
+        DIRS=(
+            "${main_dir}"
+            "${main_dir}/Helpers"
+            "${main_dir}/reports"
+            "${main_dir}/attendance_checker.py"
+            "${main_dir}/Helpers/config.json"
+            "${main_dir}/Helpers/assets.csv"
+            "${main_dir}/reports/reports.log"
+        )
+
+        not_found=0
+        for path in "${DIRS[@]}"; do
+            if [ ! -e "$path" ]; then
+                echo " $path is missing!"
+                not_found=$((not_found + 1))
+            else
+                echo "[OK]      $path  found."
+            fi
+        done
+
+        echo ""
+        if [ $not_found -eq 0 ]; then
+            echo "All required files present."
+        else
+            echo "$not_found file(s) missing! "
+        fi
         ;;
     *)
-        echo "Invalid choice. Please enter 1-4."
+        echo "Invalid choice. Please enter a number between 1 and 4."
         ;;
 esac
