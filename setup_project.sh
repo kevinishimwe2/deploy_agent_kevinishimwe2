@@ -37,7 +37,7 @@ create_directory() {
     #trap interruption
     cleanup_setup_1() {
         echo ""
-        echo "SIGINT detected (Ctrl + C) or Failure of dir creation."
+        echo "SIGINT detected (Ctrl + C) or Failure of setup."
         if [[ -d "$full_dir" ]]; then
             tar -czf "${full_dir}_archive.tar.gz" "$full_dir"
             echo "Archive created: ${full_dir}_archive.tar.gz"
@@ -50,7 +50,7 @@ create_directory() {
     trap cleanup_setup_1 SIGINT
 
     mkdir -p "${full_dir}/Helpers" "${full_dir}/reports" || cleanup_setup_1
-    chmod 755 "${full_dir}" 2>/dev/null || echo "Warning: could not chmod '${full_dir}'."
+    chmod 755 "${full_dir}" 2> /dev/null || echo "could not chmod '${full_dir}'."
 
     cat > "${full_dir}/attendance_checker.py" << 'EOF'
 import csv
@@ -71,7 +71,7 @@ def run_attendance_check():
         for row in reader:
             name = row['Names']
             email = row['Student number']
-            attended = int(row['Attendance Count'])
+            attended = int(row['Attendance Count(15)'])
             attendance_pct = (attended / total_sessions) * 100
             message = ""
             if attendance_pct < config['thresholds']['failure']:
@@ -91,7 +91,7 @@ EOF
     chmod +x "${full_dir}/attendance_checker.py"
 
     cat > "${full_dir}/Helpers/assets.csv" << 'EOF'
-Student number, Names, Attendance Count, Absence Count
+Student number,Names,Attendance Count(15),Absence Count(15)
 S001, Alice Johnson,14,1
 S002, Bob Smith,7,8
 S003, Charlie Davis,4,11
@@ -141,16 +141,17 @@ check_for_dir() {
                     ;;
                 n | N)
                     echo "Cancelled."
-                    return 1
+                   return 1
                     ;;
                 *) echo "Invalid input. Please enter y or n." ;;
             esac
         fi
     done
+    return 0
 }
 
-#------------------------------------------- Menu ----------------------------------------------------------------──
-echo -e "Choose what to do: \n."
+#------------------------------------------- Menu ------------------------------------------------------------------
+echo -e "Choose what to do: \n"
 echo "1: Make the directory structure."
 echo "2: Dynamic Configuration (Stream Editing)."
 echo "3: Process Management (The Trap)."
@@ -212,7 +213,7 @@ case $x in
                 tar -czf "${curr_dir}_archive.tar.gz" "$curr_dir"
                 echo "Archive created: ${curr_dir}_archive.tar.gz"
                 rm -rf "${curr_dir}"
-                echo "Workspace cleaned up."
+                echo "Structure cleaned up."
             else
                 echo "No directory found — nothing to archive."
             fi
@@ -224,10 +225,10 @@ case $x in
         echo "press Ctrl+C to test the trap."
         steps=(
             "1: Validating permissions."
-            "2: Reading config." 
-            "4: Processing data."
-            "3: Generating report."
-            "4: Finalising"
+            "2: Reading config."
+            "3: Processing data."
+            "4: Generating report."
+            "5: Finalising"
         )
         for i in "${!steps[@]}"; do
             echo -ne "  ${steps[i]}..."

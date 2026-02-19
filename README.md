@@ -46,8 +46,17 @@ You must have already run option 1 first.
 
 **Option 3 — Process Management (The Trap)**
 Runs a simulated deployment process.
-If you press `Ctrl+C` during the process, the script will
-Archive the project folder and delete it to keep the workspace clean.
+If you press `Ctrl+C` during the process, the program will:
+
+1.Intercept the interrupt signal.
+
+2.Archive the project folder and delete it to keep the workspace clean. 
+
+3.A compressed archive of the project directory is created.
+
+T4.he original directory is deleted.
+
+5.The script exits safely with status 130.
 
 **Option 4 — Health Check**
 Checks if Python3 is installed and verifies that all required
